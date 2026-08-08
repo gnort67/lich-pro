@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-family: 'Be Vietnam Pro', sans-serif;
+  --font-scale: 1;
+  color-scheme: light;
+
+  --surface: #FFFBF8;
+  --surface-soft: #FBF4EF;
+  --surface-raised: #FFFFFF;
+  --ink: #221816;
+  --ink-soft: #6B5D59;
+  --ink-faint: #A99C97;
+  --border-color: #EEE2DB;
+}
+
+/* Cỡ chữ tổng thể: co giãn trên html để mọi đơn vị rem (chữ + khoảng cách) tỉ lệ
+   đồng đều như zoom trình duyệt — tránh vỡ layout khi chỉ phóng to riêng chữ. */
+html {
+  font-size: calc(16px * var(--font-scale));
+}
+
+.dark {
+  color-scheme: dark;
+  --surface: #18181B;
+  --surface-soft: #202024;
+  --surface-raised: #27272B;
+  --ink: #F4F4F5;
+  --ink-soft: #B6B6BB;
+  --ink-faint: #7A7A80;
+  --border-color: #3A3A40;
+}
+
+/* Selector "html.dark" có độ đặc hiệu cao hơn "[data-color='x']" (đứng sau trong file)
+   nên luôn thắng thế — đảm bảo các sắc thái nhạt/đậm được tính lại đúng cho nền tối,
+   bất kể màu chủ đề nào đang được chọn. */
+html.dark {
+  --accent-50: color-mix(in srgb, var(--accent-500) 13%, var(--surface-raised));
+  --accent-100: color-mix(in srgb, var(--accent-500) 24%, var(--surface-raised));
+  --accent-200: color-mix(in srgb, var(--accent-500) 40%, var(--surface-raised));
+  --accent-900: color-mix(in srgb, var(--accent-500) 82%, white);
+}
+
+/* ==== Bảng màu chủ đề (10 màu) ==== */
+[data-color='do'] {
+  --accent-50: #FDF1EF; --accent-100: #FADBD5; --accent-200: #F3B3A8;
+  --accent-300: #EA8A79; --accent-400: #DE5F49; --accent-500: #C43C29;
+  --accent-600: #B3261E; --accent-700: #911D18; --accent-800: #711612;
+  --accent-900: #4E0F0C;
+}
+.dark[data-color='do'] {
+  --accent-500: #E8604A; --accent-600: #EA7A63; --accent-400: #F0937D;
+}
+
+[data-color='vang'] {
+  --accent-50: #FEF8EC; --accent-100: #FCEAC1; --accent-200: #F9D783;
+  --accent-300: #F3BE45; --accent-400: #E8A61E; --accent-500: #C9860F;
+  --accent-600: #A5690B; --accent-700: #7E4F0A; --accent-800: #5A3808;
+  --accent-900: #3B2405;
+}
+.dark[data-color='vang'] {
+  --accent-500: #F0B238; --accent-600: #F3C15E; --accent-400: #F6CD7C;
+}
+
+[data-color='xanh-la'] {
+  --accent-50: #EFF9F1; --accent-100: #D3F0DA; --accent-200: #A5E0B4;
+  --accent-300: #72CC8B; --accent-400: #45B466; --accent-500: #2C9750;
+  --accent-600: #1F7A3F; --accent-700: #175E31; --accent-800: #124A27;
+  --accent-900: #0B3319;
+}
+.dark[data-color='xanh-la'] {
+  --accent-500: #4CB973; --accent-600: #62C787; --accent-400: #7ED29B;
+}
+
+[data-color='xanh-duong'] {
+  --accent-50: #EEF5FD; --accent-100: #CFE4FA; --accent-200: #9EC9F4;
+  --accent-300: #69ABEC; --accent-400: #3E8CDF; --accent-500: #226FC2;
+  --accent-600: #1857A0; --accent-700: #14447D; --accent-800: #103460;
+  --accent-900: #0A2140;
+}
+.dark[data-color='xanh-duong'] {
+  --accent-500: #4E96E0; --accent-600: #6BA8E6; --accent-400: #8CBBEC;
+}
+
+[data-color='tim'] {
+  --accent-50: #F6F0FB; --accent-100: #E5D3F3; --accent-200: #CBA6E7;
+  --accent-300: #AE79D9; --accent-400: #9153C7; --accent-500: #7638AE;
+  --accent-600: #5E2C8C; --accent-700: #48226B; --accent-800: #351950;
+  --accent-900: #221035;
+}
+.dark[data-color='tim'] {
+  --accent-500: #9E6BC9; --accent-600: #B085D4; --accent-400: #C29FDD;
+}
+
+[data-color='hong'] {
+  --accent-50: #FDF0F4; --accent-100: #FAD6E2; --accent-200: #F3AAC4;
+  --accent-300: #EA7EA5; --accent-400: #DE5688; --accent-500: #C93A6C;
+  --accent-600: #AD2557; --accent-700: #861D44; --accent-800: #641633;
+  --accent-900: #420E21;
+}
+.dark[data-color='hong'] {
+  --accent-500: #ED6F98; --accent-600: #F088AB; --accent-400: #F4A0BC;
+}
+
+[data-color='cam'] {
+  --accent-50: #FEF3EB; --accent-100: #FCDFC2; --accent-200: #F8BC85;
+  --accent-300: #F29A4E; --accent-400: #E97D24; --accent-500: #C9640F;
+  --accent-600: #A54E0A; --accent-700: #7E3B09; --accent-800: #5C2B07;
+  --accent-900: #3D1B04;
+}
+.dark[data-color='cam'] {
+  --accent-500: #F1954F; --accent-600: #F4AA71; --accent-400: #F6BB8D;
+}
+
+[data-color='ngoc-lam'] {
+  --accent-50: #EAF7F5; --accent-100: #C7EAE6; --accent-200: #93D6CE;
+  --accent-300: #5EBEB4; --accent-400: #35A398; --accent-500: #10847A;
+  --accent-600: #0C6A62; --accent-700: #0A514B; --accent-800: #073C37;
+  --accent-900: #042724;
+}
+.dark[data-color='ngoc-lam'] {
+  --accent-500: #3FB6AB; --accent-600: #5FC5BB; --accent-400: #83D3CB;
+}
+
+[data-color='cham'] {
+  --accent-50: #F0EFFC; --accent-100: #DAD7F7; --accent-200: #B6AFEF;
+  --accent-300: #9187E4; --accent-400: #6F63D6; --accent-500: #5548C4;
+  --accent-600: #4638A8; --accent-700: #362B80; --accent-800: #282060;
+  --accent-900: #1A1440;
+}
+.dark[data-color='cham'] {
+  --accent-500: #8A80E0; --accent-600: #9C93E6; --accent-400: #B0A8EC;
+}
+
+[data-color='xam-khoi'] {
+  --accent-50: #F2F2F4; --accent-100: #E0E0E4; --accent-200: #C2C1C9;
+  --accent-300: #A2A1AC; --accent-400: #83828F; --accent-500: #656472;
+  --accent-600: #52515E; --accent-700: #403F49; --accent-800: #302F36;
+  --accent-900: #1E1D22;
+}
+.dark[data-color='xam-khoi'] {
+  --accent-500: #9695A3; --accent-600: #A8A7B4; --accent-400: #B8B7C2;
+}
+
+html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+html, body, #root { height: 100%; }
+
+body {
+  background-color: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-family);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  overscroll-behavior-y: none;
+}
+
+* { border-color: var(--border-color); }
+
+::selection { background-color: var(--accent-200); color: var(--accent-900); }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 8px; }
+
+.glass {
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+}
+
+.skeleton {
+  background-image: linear-gradient(90deg, var(--surface-soft) 0px, var(--surface-raised) 40px, var(--surface-soft) 80px);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--accent-500);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+/* Hiệu ứng nhấc nhẹ khi hover, dùng cho card/nút bấm để cảm giác mượt hơn */
+.hover-lift {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Chuyển trang mượt (chỉ dùng opacity — tránh tạo "containing block" bằng transform,
+   có thể khiến các phần tử position:fixed bên trong như modal/drawer bị lệch vị trí) */
+.page-enter {
+  animation: page-in 0.28s ease-out both;
+}
+@keyframes page-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Drawer trượt lên từ đáy màn hình (dùng cho popup xem chi tiết ngày) */
+.animate-drawer-up {
+  animation: drawer-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes drawer-up {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Ẩn thanh cuộn ngang cho danh sách ngang (đếm ngược, tuần) */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
