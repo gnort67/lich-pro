@@ -42,7 +42,8 @@ export function ToastProvider({ children }) {
     <ToastContext.Provider value={value}>
       {children}
       <div
-        className="fixed top-3 left-1/2 -translate-x-1/2 z-[100] flex w-[calc(100%-1.5rem)] max-w-sm flex-col gap-2 sm:top-5"
+        className="fixed left-1/2 -translate-x-1/2 z-[100] flex w-[calc(100%-1.5rem)] max-w-sm flex-col gap-2"
+        style={{ top: 'calc(env(safe-area-inset-top) + 0.75rem)' }}
         role="region"
         aria-live="polite"
         aria-label="Thông báo"

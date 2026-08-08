@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons/*.png'],
+      includeAssets: ['favicon.svg', 'favicon.png', 'icons/*.png'],
       manifest: {
         name: 'Lịch Pro - Lịch Âm Dương Việt Nam',
         short_name: 'Lịch Pro',
