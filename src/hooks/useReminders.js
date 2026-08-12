@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { HOLIDAYS, NGAY_CHAY_THAP_TRAI } from '../data/holidays'
+import { HOLIDAYS, NGAY_CHAY_NHI_TRAI } from '../data/holidays'
 import { getLunarInfo, getNextOccurrence, sameDay, startOfDay, addDays, formatShortDate } from '../lib/dateUtils'
 
 const LAST_NOTIFIED_KEY = 'lich-pro:last-notified-date'
@@ -9,40 +9,55 @@ export function getNotificationSupport() {
 }
 
 /**
- * Kiểm tra hôm nay/ngày mai có sự kiện đặc biệt gì cần nhắc hay không, có lọc
- * theo tuỳ chọn của người dùng (notifyLunarDays, notifyHolidayIds).
+ * Tính "ngày cần kiểm tra" dựa theo chế độ thông báo:
+ * - 'on-day': kiểm tra ngay hôm nay
+ * - 'before': kiểm tra ngày trong tương lai (hôm nay + N ngày) — nếu ngày đó là sự kiện đặc biệt
+ *             thì báo trước ngay hôm nay.
  */
-export function getTodayReminders(from = new Date(), prefs = {}) {
+function getCheckDate(today, timing, beforeDays) {
+  return timing === 'before' ? addDays(today, Math.max(1, beforeDays || 1)) : today
+}
+
+/** Kiểm tra ngày cần theo dõi có sự kiện đặc biệt gì hay không, có lọc theo tuỳ chọn người dùng. */
+export function getReminders(from = new Date(), prefs = {}) {
   const notifyLunarDays = prefs.notifyLunarDays ?? true
   const notifyHolidayIds = prefs.notifyHolidayIds ?? HOLIDAYS.map((h) => h.id)
+  const timing = prefs.notifyTiming ?? 'on-day'
+  const beforeDays = prefs.notifyBeforeDays ?? 1
 
   const today = startOfDay(from)
-  const tomorrow = addDays(today, 1)
+  const checkDate = getCheckDate(today, timing, beforeDays)
+  const isBefore = timing === 'before'
   const messages = []
 
   if (notifyLunarDays) {
-    const { lunarDay } = getLunarInfo(today)
-    if (lunarDay === 1) messages.push({ title: 'Hôm nay là Mùng Một âm lịch', body: 'Ngày đầu tháng âm lịch, thời điểm tốt để khởi đầu mọi việc.' })
-    else if (lunarDay === 15) messages.push({ title: 'Hôm nay là Ngày Rằm', body: 'Rằm âm lịch — ngày lễ Phật quan trọng trong tháng.' })
-    else if (NGAY_CHAY_THAP_TRAI.includes(lunarDay)) {
-      messages.push({ title: 'Hôm nay là Ngày Chay', body: 'Một trong mười ngày chay (Thập trai) theo truyền thống Phật giáo.' })
+    const { lunarDay } = getLunarInfo(checkDate)
+    if (NGAY_CHAY_NHI_TRAI.includes(lunarDay)) {
+      const name = lunarDay === 1 ? 'Mùng Một' : 'Ngày Rằm'
+      messages.push({
+        title: isBefore ? `Sắp tới: ${name} âm lịch` : `Hôm nay là ${name} âm lịch`,
+        body: isBefore
+          ? `Còn ${beforeDays} ngày nữa là đến ${name.toLowerCase()} (${formatShortDate(checkDate)}) — ngày ăn chay truyền thống.`
+          : 'Ngày ăn chay truyền thống theo Nhị trai (Mùng Một & Rằm).'
+      })
     }
   }
 
   for (const h of HOLIDAYS) {
     if (!notifyHolidayIds.includes(h.id)) continue
     const next = getNextOccurrence(h, today)
-    if (next && sameDay(next, today)) {
-      messages.push({ title: `Hôm nay: ${h.name}`, body: h.desc })
-    } else if (next && sameDay(next, tomorrow)) {
-      messages.push({ title: `Ngày mai: ${h.name}`, body: `Diễn ra vào ${formatShortDate(next)}. ${h.desc}` })
+    if (next && sameDay(next, checkDate)) {
+      messages.push({
+        title: isBefore ? `Sắp tới: ${h.name}` : `Hôm nay: ${h.name}`,
+        body: isBefore ? `Còn ${beforeDays} ngày nữa (${formatShortDate(next)}). ${h.desc}` : h.desc
+      })
     }
   }
 
   return messages
 }
 
-/** Trạng thái quyền thông báo trình duyệt + hàm yêu cầu quyền. Dùng ở bất kỳ đâu (vd. trang Cài đặt). */
+/** Trạng thái quyền thông báo trình duyệt + hàm yêu cầu quyền. */
 export function useNotificationPermission() {
   const [permission, setPermission] = useState(() => (getNotificationSupport() ? Notification.permission : 'unsupported'))
 
@@ -56,19 +71,31 @@ export function useNotificationPermission() {
   return { permission, requestPermission, supported: getNotificationSupport() }
 }
 
-/** Bộ đếm nền: kiểm tra định kỳ và bắn thông báo trình duyệt (chỉ nên mount 1 lần, ở Layout gốc). */
+/**
+ * Bộ đếm nền: kiểm tra định kỳ, khi đến/qua khung giờ đã đặt trong ngày (và chưa báo hôm nay)
+ * thì gửi thông báo. Chỉ nên mount 1 lần ở Layout gốc.
+ */
 export function useReminders(enabled, prefs = {}) {
   const notifyLunarDays = prefs.notifyLunarDays ?? true
   const notifyHolidayIds = prefs.notifyHolidayIds ?? HOLIDAYS.map((h) => h.id)
+  const notifyHour = prefs.notifyHour ?? 8
+  const notifyMinute = prefs.notifyMinute ?? 0
+  const notifyTiming = prefs.notifyTiming ?? 'on-day'
+  const notifyBeforeDays = prefs.notifyBeforeDays ?? 1
   const holidayIdsKey = notifyHolidayIds.join(',')
 
   const checkAndNotify = useCallback(() => {
     if (!enabled || !getNotificationSupport() || Notification.permission !== 'granted') return
-    const todayKey = startOfDay(new Date()).toISOString().slice(0, 10)
+    const now = new Date()
+    const todayKey = startOfDay(now).toISOString().slice(0, 10)
     const lastNotified = localStorage.getItem(LAST_NOTIFIED_KEY)
     if (lastNotified === todayKey) return
 
-    const reminders = getTodayReminders(new Date(), { notifyLunarDays, notifyHolidayIds })
+    const targetTimeToday = new Date(now)
+    targetTimeToday.setHours(notifyHour, notifyMinute, 0, 0)
+    if (now < targetTimeToday) return // chưa tới giờ đã hẹn trong ngày
+
+    const reminders = getReminders(now, { notifyLunarDays, notifyHolidayIds, notifyTiming, notifyBeforeDays })
     if (reminders.length > 0) {
       reminders.slice(0, 3).forEach((r, idx) => {
         setTimeout(() => {
@@ -82,7 +109,7 @@ export function useReminders(enabled, prefs = {}) {
     }
     localStorage.setItem(LAST_NOTIFIED_KEY, todayKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, notifyLunarDays, holidayIdsKey])
+  }, [enabled, notifyLunarDays, holidayIdsKey, notifyHour, notifyMinute, notifyTiming, notifyBeforeDays])
 
   useEffect(() => {
     checkAndNotify()

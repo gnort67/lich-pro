@@ -4,15 +4,18 @@ import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import VanNienDetail from '../components/VanNienDetail'
 import CountdownCard from '../components/CountdownCard'
+import Sheet from '../components/Sheet'
+import HolidayDetail from '../components/HolidayDetail'
 import { CardSkeleton, Skeleton } from '../components/Skeleton'
 import Button from '../components/Button'
-import { HOLIDAYS, NGAY_CHAY_THAP_TRAI } from '../data/holidays'
+import { HOLIDAYS } from '../data/holidays'
 import { getNextOccurrence, getLunarInfo, WEEKDAYS_SHORT, sameDay, mondayIndex, addDays } from '../lib/dateUtils'
 import { useToast } from '../contexts/ToastContext'
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [selected, setSelected] = useState(null)
   const { notify } = useToast()
   const today = useMemo(() => new Date(), [])
   const { lunarDay: todayLunarDay } = useMemo(() => getLunarInfo(today), [today])
@@ -64,7 +67,7 @@ export default function HomePage() {
           return (
             <div
               key={d.toISOString()}
-              className={`flex w-14 shrink-0 flex-col items-center gap-1 rounded-2xl border py-2.5 transition-colors duration-200 ${
+              className={`hover-lift flex w-14 shrink-0 flex-col items-center gap-1 rounded-2xl border py-2.5 transition-colors duration-200 ${
                 isToday ? 'border-accent-500 bg-accent-600 text-white shadow-soft' : 'border-border bg-surface-raised text-ink'
               }`}
             >
@@ -115,7 +118,7 @@ export default function HomePage() {
         ) : (
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
             {upcoming.map(({ holiday, next }) => (
-              <CountdownCard key={holiday.id} holiday={holiday} nextDate={next} compact />
+              <CountdownCard key={holiday.id} holiday={holiday} nextDate={next} compact onClick={() => setSelected({ holiday, next })} />
             ))}
           </div>
         )}
@@ -129,24 +132,30 @@ export default function HomePage() {
           </div>
           <div>
             <h2 className="text-base font-bold text-ink sm:text-lg">Ngày chay trong tháng</h2>
-            <p className="text-[11px] text-ink-faint">Thập trai — 10 ngày chay phổ biến theo âm lịch</p>
+            <p className="text-[11px] text-ink-faint">Nhị trai — Mùng Một &amp; Rằm hàng tháng âm lịch</p>
           </div>
         </div>
-        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
-          {NGAY_CHAY_THAP_TRAI.map((day) => {
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { day: 1, label: 'Mùng Một', desc: 'Đầu tháng âm lịch' },
+            { day: 15, label: 'Rằm', desc: 'Giữa tháng âm lịch' }
+          ].map(({ day, label, desc }) => {
             const isTodayChay = day === todayLunarDay
             return (
               <div
                 key={day}
-                className={`hover-lift flex w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border py-3.5 shadow-soft transition-colors duration-200 ${
+                className={`hover-lift flex flex-col items-center justify-center gap-1.5 rounded-2xl border py-6 text-center shadow-soft transition-colors duration-200 ${
                   isTodayChay
                     ? 'border-emerald-500 bg-emerald-600 text-white'
                     : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800/60 dark:bg-emerald-500/10 dark:text-emerald-300'
                 }`}
               >
-                <UtensilsCrossed size={14} className={isTodayChay ? 'text-white/85' : 'opacity-70'} />
-                <span className="text-lg font-extrabold leading-none">{day}</span>
-                <span className={`text-[9.5px] font-medium ${isTodayChay ? 'text-white/80' : 'opacity-70'}`}>Âm lịch</span>
+                <UtensilsCrossed size={20} className={isTodayChay ? 'text-white/90' : 'opacity-75'} />
+                <span className="text-2xl font-extrabold leading-none">{label}</span>
+                <span className={`text-[11px] font-medium ${isTodayChay ? 'text-white/80' : 'opacity-70'}`}>{desc}</span>
+                {isTodayChay && (
+                  <span className="mt-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold">Hôm nay</span>
+                )}
               </div>
             )
           })}
@@ -160,6 +169,10 @@ export default function HomePage() {
           Bật <Link to="/cai-dat" className="font-semibold text-accent-700 underline decoration-dotted dark:text-accent-300">thông báo nhắc nhở</Link> trong Cài đặt để không bỏ lỡ ngày chay, ngày rằm và các ngày lễ đặc biệt.
         </p>
       </section>
+
+      <Sheet open={!!selected} onClose={() => setSelected(null)} title="Chi tiết sự kiện">
+        {selected && <HolidayDetail holiday={selected.holiday} nextDate={selected.next} />}
+      </Sheet>
     </div>
   )
 }

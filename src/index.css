@@ -164,10 +164,11 @@ body {
 ::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 8px; }
 
 .glass {
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+  background: color-mix(in srgb, var(--surface-raised) calc(var(--glass-bg-opacity, 0.72) * 100%), transparent);
+  backdrop-filter: blur(var(--glass-blur, 16px)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--glass-blur, 16px)) saturate(140%);
+  border: 1px solid color-mix(in srgb, var(--border-color) calc(var(--glass-border-opacity, 0.8) * 100%), transparent);
+  transition: background 0.2s ease, backdrop-filter 0.2s ease;
 }
 
 .skeleton {
@@ -190,14 +191,14 @@ body {
   transform: translateY(-2px);
 }
 
-/* Chuyển trang mượt (chỉ dùng opacity — tránh tạo "containing block" bằng transform,
-   có thể khiến các phần tử position:fixed bên trong như modal/drawer bị lệch vị trí) */
+/* Chuyển trang mượt. Sheet/modal giờ render qua Portal (ra ngoài cây DOM này) nên
+   dùng transform ở đây không còn rủi ro làm lệch vị trí phần tử position:fixed nữa. */
 .page-enter {
-  animation: page-in 0.28s ease-out both;
+  animation: page-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @keyframes page-in {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% { opacity: 0; transform: translateY(8px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* Drawer trượt lên từ đáy màn hình (dùng cho popup xem chi tiết ngày) */

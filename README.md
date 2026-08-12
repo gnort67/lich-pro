@@ -11,9 +11,9 @@
 - **Lịch âm dương**: xem lịch theo tháng, mỗi ngày hiển thị cả ngày dương và ngày âm, đánh dấu ngày rằm, mùng một, ngày chay, ngày lễ.
 - **Lịch vạn niên**: tra cứu chi tiết một ngày bất kỳ — Can Chi ngày/tháng/năm, con giáp, giờ hoàng đạo; quy đổi qua lại giữa dương lịch và âm lịch.
 - **Đếm ngược ngày lễ**: danh sách các ngày lễ, kỷ niệm nổi bật ở Việt Nam (Tết Nguyên Đán, Giỗ Tổ Hùng Vương, Quốc khánh, Trung Thu...) với đồng hồ đếm ngược thời gian thực, lọc theo danh mục.
-- **Ngày chay &amp; ngày rằm**: tự động đánh dấu các ngày ăn chay theo lịch "Thập trai" (mùng 1, 8, 14, 15, 18, 23, 24, 28, 29, 30 âm lịch) và ngày rằm/mùng một trong lịch.
-- **Cài đặt giao diện**: đổi chế độ sáng/tối/hệ thống, 10 tông màu chủ đề, 5 kiểu chữ (gồm 2 font thuần Việt Times New Roman & Arial), 4 cỡ chữ co giãn toàn ứng dụng — lưu lại trên trình duyệt.
-- **Thông báo nhắc nhở**: bật thông báo trình duyệt để không bỏ lỡ ngày chay, ngày rằm, mùng một và các ngày lễ đặc biệt (Tết Dương lịch, Tết Nguyên Đán, Giao thừa...).
+- **Ngày chay &amp; ngày rằm**: tự động đánh dấu 2 ngày ăn chay theo "Nhị trai" (Mùng Một &amp; Rằm — 15 âm lịch) trong lịch, làm nổi bật khi xem chi tiết ngày.
+- **Cài đặt giao diện**: đổi chế độ sáng/tối/hệ thống, 8 tông màu chủ đề (có chế độ đổi màu ngẫu nhiên mỗi ngày), 5 kiểu chữ (gồm 2 font thuần Việt Times New Roman & Arial), 4 cỡ chữ co giãn toàn ứng dụng, độ mờ kính (Glassmorphism) tuỳ chỉnh theo % — lưu lại trên trình duyệt.
+- **Thông báo nhắc nhở**: bật thông báo trình duyệt cho ngày chay và các ngày lễ tự chọn, tuỳ chỉnh giờ:phút gửi và chế độ nhắc đúng ngày hoặc báo trước N ngày.
 - **PWA**: có thể "Cài đặt vào màn hình chính" trên điện thoại/máy tính, hoạt động ngoại tuyến nhờ Service Worker.
 - Trải nghiệm mượt: loading skeleton, trạng thái loading/disable cho nút bấm, toast thông báo, responsive chuẩn cho PC, tablet, mobile (giao diện mobile có thanh điều hướng dưới như app thật).
 
@@ -81,7 +81,7 @@ Sau khi build và deploy (hoặc chạy `npm run preview`), mở trang web trên
 
 Vào trang **Cài đặt** trong ứng dụng để:
 - Chuyển chế độ Sáng / Tối / Theo hệ thống
-- Chọn 1 trong 10 tông màu: Đỏ Son, Vàng Kim, Xanh Ngọc, Xanh Dương, Tím Huế, Hồng Đào, Cam Sen, Ngọc Lam, Chàm Tím, Xám Khói
+- Chọn 1 trong 8 tông màu: Đỏ Son, Vàng Kim, Xanh Ngọc, Xanh Dương, Tím Huế, Hồng Đào, Cam Sen, Ngọc Lam (hoặc bật "Đổi màu ngẫu nhiên mỗi ngày")
 - Chọn 1 trong 5 kiểu chữ: Be Vietnam Pro, Inter, Nunito, Times New Roman, Arial
 - Chọn cỡ chữ: Nhỏ / Vừa / Lớn / Rất lớn
 
@@ -90,7 +90,7 @@ Các tuỳ chỉnh được lưu tự động vào `localStorage` của trình d
 ## ⚠️ Lưu ý về dữ liệu
 
 - Thuật toán chuyển đổi âm–dương lịch dựa trên múi giờ GMT+7, độ chính xác cao cho các năm hiện đại.
-- Danh sách ngày chay mặc định theo lịch **Thập trai** (10 ngày chay/tháng âm lịch) — một trong các quy ước phổ biến theo truyền thống Phật giáo dân gian; có thể khác với lịch chay của từng tông phái/cá nhân.
+- Danh sách ngày chay mặc định theo **Nhị trai** (Mùng Một &amp; Rằm hàng tháng âm lịch) — cách tính phổ biến nhất; có thể khác với lịch chay của từng tông phái/cá nhân.
 - Danh sách ngày lễ tổng hợp các ngày lễ, kỷ niệm phổ biến, mang tính tham khảo.
 
 ## 📄 Giấy phép

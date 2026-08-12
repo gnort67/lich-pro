@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Home, CalendarDays, ScrollText, Hourglass, Settings2, Moon, Sparkles } from 'lucide-react'
+import { Home, CalendarDays, ScrollText, Hourglass, Settings2, Sparkles } from 'lucide-react'
 
 const ITEMS = [
   { to: '/', label: 'Trang chủ', icon: Home },
@@ -13,9 +13,7 @@ export default function Sidebar() {
   return (
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-surface-soft px-4 py-6 sm:flex">
       <div className="mb-8 flex items-center gap-2.5 px-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent-600 text-white shadow-soft">
-          <Moon size={20} fill="currentColor" strokeWidth={0} />
-        </div>
+        <img src="/icons/icon-192.png" alt="Lịch Pro" className="h-10 w-10 shrink-0 rounded-2xl shadow-soft" />
         <div>
           <p className="text-base font-bold leading-tight text-ink">Lịch Pro</p>
           <p className="text-[11px] text-ink-faint">Âm dương &amp; vạn niên</p>

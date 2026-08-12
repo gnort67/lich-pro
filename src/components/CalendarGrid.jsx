@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { getLunarInfo, sameDay, mondayIndex, pad2, WEEKDAYS_SHORT } from '../lib/dateUtils'
-import { NGAY_CHAY_THAP_TRAI, HOLIDAYS } from '../data/holidays'
+import { NGAY_CHAY_NHI_TRAI, getHolidaysOnDate } from '../data/holidays'
 
 function buildMonthMatrix(year, month) {
   const firstDay = new Date(year, month, 1)
@@ -13,13 +13,6 @@ function buildMonthMatrix(year, month) {
     days.push(d)
   }
   return days
-}
-
-function holidaysOnDate(d, lunarInfo) {
-  return HOLIDAYS.filter((h) => {
-    if (h.type === 'solar') return h.day === d.getDate() && h.month === d.getMonth() + 1
-    return h.day === lunarInfo.lunarDay && h.month === lunarInfo.lunarMonth && !lunarInfo.isLeap
-  })
 }
 
 export default function CalendarGrid({ year, month, selectedDate, onSelect }) {
@@ -42,9 +35,9 @@ export default function CalendarGrid({ year, month, selectedDate, onSelect }) {
           const isToday = sameDay(d, today)
           const isSelected = selectedDate && sameDay(d, selectedDate)
           const isSunday = d.getDay() === 0
-          const holidaysToday = holidaysOnDate(d, lunarInfo)
+          const holidaysToday = getHolidaysOnDate(d, lunarInfo)
           const isHoliday = holidaysToday.length > 0
-          const isChay = NGAY_CHAY_THAP_TRAI.includes(lunarInfo.lunarDay)
+          const isChay = NGAY_CHAY_NHI_TRAI.includes(lunarInfo.lunarDay)
           const isRam = lunarInfo.lunarDay === 15
           const isMungMot = lunarInfo.lunarDay === 1
           const lunarLabel = isMungMot ? `${lunarInfo.lunarDay}/${pad2(lunarInfo.lunarMonth)}` : pad2(lunarInfo.lunarDay)

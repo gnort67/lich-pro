@@ -9,7 +9,11 @@ export default function Layout() {
   const { settings } = useSettings()
   useReminders(settings.notificationsEnabled, {
     notifyLunarDays: settings.notifyLunarDays,
-    notifyHolidayIds: settings.notifyHolidayIds
+    notifyHolidayIds: settings.notifyHolidayIds,
+    notifyHour: settings.notifyHour,
+    notifyMinute: settings.notifyMinute,
+    notifyTiming: settings.notifyTiming,
+    notifyBeforeDays: settings.notifyBeforeDays
   })
 
   return (

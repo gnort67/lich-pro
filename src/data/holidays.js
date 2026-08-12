@@ -56,3 +56,11 @@ export const CATEGORY_COLOR = {
 export const NGAY_CHAY_THAP_TRAI = [1, 8, 14, 15, 18, 23, 24, 28, 29, 30]
 /** Nhị trai - 2 ngày chay phổ biến nhất: Mùng Một và Rằm */
 export const NGAY_CHAY_NHI_TRAI = [1, 15]
+
+/** Tìm các ngày lễ rơi vào một ngày dương lịch cụ thể (cần truyền kèm thông tin âm lịch của ngày đó) */
+export function getHolidaysOnDate(date, lunarInfo) {
+  return HOLIDAYS.filter((h) => {
+    if (h.type === 'solar') return h.day === date.getDate() && h.month === date.getMonth() + 1
+    return h.day === lunarInfo.lunarDay && h.month === lunarInfo.lunarMonth && !lunarInfo.isLeap
+  })
+}

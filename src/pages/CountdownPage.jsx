@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import Header from '../components/Header'
 import CountdownCard from '../components/CountdownCard'
+import Sheet from '../components/Sheet'
+import HolidayDetail from '../components/HolidayDetail'
 import { ListSkeleton } from '../components/Skeleton'
 import { HOLIDAYS, CATEGORY_LABEL } from '../data/holidays'
 import { getNextOccurrence } from '../lib/dateUtils'
@@ -10,6 +12,7 @@ const FILTERS = [{ id: 'all', label: 'Tất cả' }, ...Object.entries(CATEGORY_
 export default function CountdownPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [selected, setSelected] = useState(null)
   const today = useMemo(() => new Date(), [])
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export default function CountdownPage() {
       <Header title="Đếm ngược sự kiện" subtitle="Ngày lễ nổi bật Việt Nam" />
       <div className="mt-4 hidden sm:block">
         <h1 className="text-2xl font-extrabold text-ink">Đếm ngược sự kiện</h1>
-        <p className="text-sm text-ink-soft">Theo dõi thời gian còn lại đến các ngày lễ, kỷ niệm nổi bật.</p>
+        <p className="text-sm text-ink-soft">Theo dõi thời gian còn lại đến các ngày lễ, kỷ niệm nổi bật. Chạm vào một thẻ để xem chi tiết.</p>
       </div>
 
       <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar sm:mt-6">
@@ -57,11 +60,15 @@ export default function CountdownPage() {
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {items.map(({ holiday, next }) => (
-              <CountdownCard key={holiday.id} holiday={holiday} nextDate={next} />
+              <CountdownCard key={holiday.id} holiday={holiday} nextDate={next} onClick={() => setSelected({ holiday, next })} />
             ))}
           </div>
         )}
       </section>
+
+      <Sheet open={!!selected} onClose={() => setSelected(null)} title="Chi tiết sự kiện">
+        {selected && <HolidayDetail holiday={selected.holiday} nextDate={selected.next} />}
+      </Sheet>
     </div>
   )
 }

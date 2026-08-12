@@ -1,9 +1,10 @@
 import * as Icons from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { diffParts, formatShortDate, formatVNDate } from '../lib/dateUtils'
 import { CATEGORY_COLOR, CATEGORY_LABEL } from '../data/holidays'
 import { useNow } from '../hooks/useNow'
 
-export default function CountdownCard({ holiday, nextDate, compact = false }) {
+export default function CountdownCard({ holiday, nextDate, compact = false, onClick }) {
   const now = useNow(1000)
   const Icon = Icons[holiday.icon] ?? Icons.Star
   const { days, hours, minutes, seconds } = diffParts(nextDate, now)
@@ -11,7 +12,10 @@ export default function CountdownCard({ holiday, nextDate, compact = false }) {
 
   if (compact) {
     return (
-      <div className="hover-lift flex w-40 shrink-0 flex-col gap-2 rounded-2xl border border-border bg-surface-raised p-3.5 shadow-soft sm:w-44">
+      <button
+        onClick={onClick}
+        className="focus-ring hover-lift flex w-40 shrink-0 flex-col gap-2 rounded-2xl border border-border bg-surface-raised p-3.5 text-left shadow-soft sm:w-44"
+      >
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-100 text-accent-600 dark:bg-accent-200 dark:text-accent-300">
           <Icon size={16} />
         </div>
@@ -20,12 +24,15 @@ export default function CountdownCard({ holiday, nextDate, compact = false }) {
           {isTodayEvent ? 'Hôm nay' : `${days} ngày`}
         </p>
         <p className="text-[11px] text-ink-faint">{formatShortDate(nextDate)}</p>
-      </div>
+      </button>
     )
   }
 
   return (
-    <div className="hover-lift rounded-2xl border border-border bg-surface-raised p-4 shadow-soft hover:shadow-card">
+    <button
+      onClick={onClick}
+      className="focus-ring hover-lift w-full rounded-2xl border border-border bg-surface-raised p-4 text-left shadow-soft hover:shadow-card"
+    >
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-100 text-accent-600 dark:bg-accent-200 dark:text-accent-300">
@@ -53,7 +60,10 @@ export default function CountdownCard({ holiday, nextDate, compact = false }) {
       )}
 
       <p className="mt-3 text-xs leading-relaxed text-ink-soft">{holiday.desc}</p>
-    </div>
+      <p className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-accent-600 dark:text-accent-400">
+        Xem chi tiết <ChevronRight size={13} />
+      </p>
+    </button>
   )
 }
 
